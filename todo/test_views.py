@@ -71,3 +71,17 @@ class TestViews(TestCase):
         updated_item = Item.objects.get(id=item.id)
         # check if item has indeed been updated
         self.assertFalse(updated_item.done)
+
+    def test_can_edit_item(self):
+        # create an item to be edited
+        # pylint: disable=maybe-no-member
+        item = Item.objects.create(name='Test todo item')
+        # set an http request editing the test item as a variable
+        response = self.client.post(f'/edit/{item.id}', {'name': 'Updated'})
+        # again a crud operation is tested using it's redirect
+        self.assertRedirects(response, '/')
+        # get updated item
+        # pylint: disable=maybe-no-member
+        updated_item = Item.objects.get(id=item.id)
+        # test updated names are equal
+        self.assertEqual(updated_item.name, 'Updated')
